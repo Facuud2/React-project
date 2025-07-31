@@ -1,77 +1,17 @@
 import Product from "./components/Product";
-import { useState, useEffect } from "react";
-import productos from "./db"; 
+
 import Header from "./components/Header";
+import { useCart } from "./hooks/useCart";
 
 function App() {
 
 
-const initialCart = () => {
-  const localStorageCart = localStorage.getItem('cart');
-  return localStorageCart ? JSON.parse(localStorageCart) : [];
-}
-
-const [data, setData] = useState(productos);
-
-const [cart, setCart] = useState(initialCart);
-
-const MIN_QUANTITY = 1;
-const MAX_QUANTITY = 10;
-
-const handleAddToCart = (product) => {
-
-  const itemExists = cart.findIndex((item) => item.id === product.id)
-    if (itemExists !== -1) {
-      const updatedCart = [...cart];
-
-      updatedCart[itemExists].cantidad += 1;
-
-      setCart(updatedCart);
-      
-    } else {
-      product.cantidad = 1;
-      setCart([...cart, product]);
-    }
-};
-
-  const handleRemoveFromCart = (id) => {
-    setCart(prevCart => prevCart.filter(product => product.id !== id));
-    console.log(cart);
-  };
-  
-  const handleIncreaseQuantity = (id) => {
-    const updatedCart = cart.map(item => {
-      if(item.id === id && item.cantidad < MAX_QUANTITY) {
-        return {
-          ...item,
-          cantidad: item.cantidad + 1
-        }
-      }
-      return item;
-    });
-    setCart(updatedCart);
-  }
-
-  const handleDecreaseQuantity = (id) => {
-    const updatedCart = cart.map(item => {
-      if(item.id === id && item.cantidad > MIN_QUANTITY) {
-        return {
-          ...item,
-          cantidad: item.cantidad - 1
-        }
-      }
-      return item;
-    });
-    setCart(updatedCart);
-  }
-
-  const handleClearCart = () => {
-    setCart([]);
-  }
-
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+  const { data, cart, setCart, handleAddToCart, handleRemoveFromCart, handleIncreaseQuantity, handleDecreaseQuantity, handleClearCart,         isOpen,
+        dropdownRef,
+        toggleCart,
+        totalItems,
+        isEmpty,
+        total } = useCart();
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -81,6 +21,12 @@ const handleAddToCart = (product) => {
         handleIncreaseQuantity={handleIncreaseQuantity}
         handleDecreaseQuantity={handleDecreaseQuantity}
         handleClearCart={handleClearCart}
+        isOpen={isOpen}
+        dropdownRef={dropdownRef}
+        toggleCart={toggleCart}
+        totalItems={totalItems}
+        isEmpty={isEmpty}
+        total={total}
       />
       {/* Espaciado para evitar solapamiento con el header */}
       <div className="pt-24 px-4 max-w-7xl mx-auto">
@@ -91,7 +37,6 @@ const handleAddToCart = (product) => {
             <Product 
               key={product.id}
               product={product}
-              setCart={setCart}
               cart={cart}
               handleAddToCart={handleAddToCart}
             />

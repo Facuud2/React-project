@@ -1,4 +1,3 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 const CartContainer = styled.div`
@@ -230,36 +229,8 @@ const EmptyCart = styled.div`
   color: #999;
 `;
 
-const CartList = ({ cart, handleRemoveFromCart, handleIncreaseQuantity, handleDecreaseQuantity, handleClearCart }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+const CartList = ({ cart, handleRemoveFromCart, handleIncreaseQuantity, handleDecreaseQuantity, handleClearCart, isOpen, dropdownRef, toggleCart, totalItems, isEmpty, total }) => {
 
-  const toggleCart = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
-
-  const totalItems = cart.reduce((total, item) => total + (item.cantidad), 0);
-
-  const isEmpty = useMemo(() => cart.length === 0, [cart]);
-
-  const total = useMemo(() => cart.reduce((total, item) => total + (item.precio * (item.cantidad)), 0), [cart]);
 
   return (
     <CartContainer ref={dropdownRef}>
